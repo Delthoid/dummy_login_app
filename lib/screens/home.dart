@@ -1,4 +1,5 @@
 import 'package:dummy_login_app/models/model.dart';
+import 'package:dummy_login_app/providers/app_provider.dart';
 import 'package:dummy_login_app/providers/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,39 +12,59 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late AlbumProvider provider;
-  late Future<Album> futureAlbum;
   @override
-  void initState() {
-    // TODO: implement initState
-    provider = Provider.of<AlbumProvider>(context, listen: false);
-    futureAlbum = provider.fetchAlbum();
-    super.initState();
+  Widget build(BuildContext context) {
+    return Consumer<AppProvider>(
+      builder: (context, app, child) {
+        Widget _scaffold;
+        if (app.runningOnWeb) {
+          _scaffold = Scaffold(
+            appBar: AppBar(
+              title: const Text('API Practice'),
+            ),
+            body: Container(
+              child: const MobileContent(),
+            ),
+          );
+        } else {
+          _scaffold = Scaffold(
+            body: Stack(
+              children: [
+                Container(
+                  color: Colors.red,
+                  child: Container(
+                    child: const MobileContent(),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+        return _scaffold;
+      },
+    );
   }
+}
+
+class MobileContent extends StatelessWidget {
+  const MobileContent({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('API Practice'),
-      ),
-      body: Container(
-        child: Consumer<AlbumProvider>(
-          builder: (context, album, child) {
-            return FutureBuilder<Album>(
-                future: futureAlbum,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Text(snapshot.data!.title);
-                  } else if (snapshot.hasError) {
-                    return Text('${snapshot.error}');
-                  }
-
-                  // By default, show a loading spinner.
-                  return const CircularProgressIndicator();
-                });
-          },
-        ),
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Image.asset(
+                'assets/avatar.png',
+                width: 50,
+              ),
+              const Expanded(child: Center())
+            ],
+          ),
+        ],
       ),
     );
   }
