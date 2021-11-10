@@ -4,6 +4,7 @@ import 'dart:io' show Platform;
 
 class AppProvider extends ChangeNotifier {
   bool runningOnWeb = false;
+  String currentEmail = '';
 
   void checkIfWeb(bool isWeb) {
     runningOnWeb = isWeb;

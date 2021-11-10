@@ -1,5 +1,7 @@
-import 'package:dummy_login_app/providers/app_version.dart';
+import 'package:dummy_login_app/providers/app_provider.dart';
+import 'package:dummy_login_app/widgets/app_version.dart';
 import 'package:dummy_login_app/providers/login_provider.dart';
+import 'package:dummy_login_app/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,14 +14,21 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   late LoginProvider prov;
+  late AppProvider appProv;
+
   Future<void> _submitLogin(String email, String password) async {
     prov.login(email: email, password: password, context: context);
   }
 
+  void _saveEmail(BuildContext context, String email) {
+    appProv.currentEmail = email;
+    print(appProv.currentEmail);
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     prov = Provider.of<LoginProvider>(context, listen: false);
+    appProv = Provider.of<AppProvider>(context, listen: false);
     super.initState();
   }
 
@@ -28,6 +37,7 @@ class _LoginFormState extends State<LoginForm> {
     final _formKey = GlobalKey<FormState>();
     final TextEditingController emailController = TextEditingController();
     final TextEditingController passwordController = TextEditingController();
+
     return Container(
       child: Form(
         key: _formKey,
@@ -41,8 +51,12 @@ class _LoginFormState extends State<LoginForm> {
             ),
             TextFormField(
               controller: emailController,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(), hintText: 'Email'),
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                hintText: 'Email',
+              ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter some text';
@@ -55,9 +69,12 @@ class _LoginFormState extends State<LoginForm> {
             ),
             TextFormField(
               controller: passwordController,
-              decoration: const InputDecoration(
+              obscureText: true,
+              decoration: InputDecoration(
                 hintText: 'Password',
-                border: OutlineInputBorder(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -75,17 +92,15 @@ class _LoginFormState extends State<LoginForm> {
                 if (login.isLoading) {
                   content = const CircularProgressIndicator();
                 } else {
-                  content = ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 45),
-                    ),
-                    onPressed: () async {
+                  content = CustomButton(
+                    child: const Text('Log In'),
+                    action: () async {
                       await _submitLogin(
                         emailController.text,
                         passwordController.text,
                       );
+                      _saveEmail(context, emailController.text);
                     },
-                    child: const Text('Log In'),
                   );
                 }
                 return content;

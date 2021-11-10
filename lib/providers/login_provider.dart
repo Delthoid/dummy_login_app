@@ -34,8 +34,6 @@ class LoginProvider extends ChangeNotifier {
       isLoading = true;
       Navigator.of(context)
           .pushNamedAndRemoveUntil('/home', (Route<dynamic> route) => false);
-      //Navigator.pushNamed(context, '/home');
-      //Navigator.push(context, ModalRoute.withName('/home'));
     } else {
       status = response.statusCode;
       isLoading = false;

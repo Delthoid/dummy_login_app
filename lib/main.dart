@@ -1,9 +1,14 @@
+import 'dart:ui';
+
 import 'package:dummy_login_app/providers/app_provider.dart';
 import 'package:dummy_login_app/providers/login_provider.dart';
-import 'package:dummy_login_app/providers/provider.dart';
+import 'package:dummy_login_app/providers/profile_provider.dart';
+
 import 'package:dummy_login_app/screens/home.dart';
 import 'package:dummy_login_app/screens/login.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -17,9 +22,20 @@ void main() {
       ChangeNotifierProvider<AppProvider>(
         create: (_) => AppProvider(),
       ),
+      ChangeNotifierProvider<ProfileProvider>(
+        create: (_) => ProfileProvider(),
+      ),
     ],
     child: const MyApp(),
   ));
+}
+
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
 }
 
 class MyApp extends StatelessWidget {
@@ -32,15 +48,14 @@ class MyApp extends StatelessWidget {
     return Consumer<AppProvider>(
       builder: (context, app, child) {
         return MaterialApp(
-          title: 'Flutter Demo',
+          debugShowCheckedModeBanner: false,
+          scrollBehavior: MyCustomScrollBehavior(),
+          title: 'Dummy Login',
           theme: ThemeData(
-            primarySwatch: Colors.purple,
-            textTheme: const TextTheme(
-              bodyText1: TextStyle(
-                color: Colors.red,
-                fontSize: 10,
-              ),
-            ),
+            //primarySwatch: Colors.purple,
+            primaryColor: const Color(0XFF7F69FC),
+            //fontFamily: GoogleFonts.poppinsTextTheme(),
+            textTheme: GoogleFonts.poppinsTextTheme(),
           ),
           initialRoute: '/',
           routes: {
@@ -50,16 +65,5 @@ class MyApp extends StatelessWidget {
         );
       },
     );
-    // return MaterialApp(
-    //       title: 'Flutter Demo',
-    //       theme: ThemeData(
-    //         primarySwatch: Colors.blue,
-    //       ),
-    //       initialRoute: '/login',
-    //       routes: {
-    //         '/': (context) => const HomeScreen(),
-    //         '/login': (context) => const LoginScreen(),
-    //       },
-    //     );
   }
 }
