@@ -95,11 +95,13 @@ class _LoginFormState extends State<LoginForm> {
                   content = CustomButton(
                     child: const Text('Log In'),
                     action: () async {
-                      await _submitLogin(
-                        emailController.text,
-                        passwordController.text,
-                      );
-                      _saveEmail(context, emailController.text);
+                      if (_formKey.currentState!.validate()) {
+                        await _submitLogin(
+                          emailController.text,
+                          passwordController.text,
+                        );
+                        _saveEmail(context, emailController.text);
+                      }
                     },
                   );
                 }
